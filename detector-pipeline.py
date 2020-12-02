@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
 
 import glob
 import pandas as pd
@@ -25,14 +29,6 @@ def remove_accents(input_str):
     nfkd_form = unicodedata.normalize('NFKD', input_str)
     only_ascii = nfkd_form.encode('ASCII', 'ignore')
     return only_ascii.decode()
-
-
-def rm_non_english_words(text):
-    words = set(nltk.corpus.words.words())
-    
-    text = " ".join(w for w in nltk.wordpunct_tokenize(text)          if w.lower() in words or not w.isalpha() or not len(w) > 10)
-    
-    return text
 
 def email_num_key_compare(email_path):
     match_pattern = r'[0-9]*$'
@@ -100,3 +96,4 @@ y_pred2 = rf_tfidf_pipeline.predict(X_test)
 
 print(classification_report(y_train, y_pred))
 print(classification_report(y_test, y_pred2))
+
