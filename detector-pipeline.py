@@ -5,6 +5,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import unicodedata
 import nltk
+import re
 
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import make_pipeline
@@ -33,7 +34,12 @@ def rm_non_english_words(text):
     
     return text
 
-emails_filepaths = glob.glob("data/emails/inmail.*")
+def email_num_key_compare(email_path):
+    match_pattern = r'[0-9]*$'
+    email_num = re.search(match_pattern, email_path)
+    return int(email_num.group(0))
+
+emails_filepaths = sorted(glob.glob("data/emails/inmail.*"), key=email_num_key_compare)
 
 num_emails = 100
 
@@ -47,18 +53,14 @@ for path, label in zip(emails_filepaths[:num_emails], labels_lst[:num_emails]):
     with open(path, 'rb') as file:
         html = BeautifulSoup(file.read(),"html.parser")
         email_text = html.get_text()
-        email_text = remove_accents(email_text)
-        email_text = email_text.lower()
-        email_text = rm_non_english_words(email_text)
         
-        new_row = {'email': email_text, 'label': label}
+        new_row = {'filename': path[12:], 'email': email_text, 'label': label}
         emails_df = emails_df.append(new_row, ignore_index=True)
 
 X = emails_df['email']
 y = emails_df['label']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=123)
-
 
 nb_cv_pipeline = make_pipeline(
     CountVectorizer(binary=True),
@@ -98,4 +100,3 @@ y_pred2 = rf_tfidf_pipeline.predict(X_test)
 
 print(classification_report(y_train, y_pred))
 print(classification_report(y_test, y_pred2))
-
