@@ -1,8 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
 
 import glob
 import pandas as pd
@@ -34,6 +30,18 @@ def email_num_key_compare(email_path):
     match_pattern = r'[0-9]*$'
     email_num = re.search(match_pattern, email_path)
     return int(email_num.group(0))
+
+def show_topics(nmf_model, feature_names, num_topics=10, num_top_words=10):
+    word_dct = {}
+    
+    for i in range(num_topics):
+        words_idx = nmf_model.components_[i].argsort()[:(-num_top_words)-1:-1]
+        words = [feature_names[idx] for idx in words_idx]
+        word_dct[f'Topic #{i+1}'] = words
+        
+    word_df = pd.DataFrame(word_dct)
+        
+    return word_df
 
 emails_filepaths = sorted(glob.glob("data/emails/inmail.*"), key=email_num_key_compare)
 
@@ -96,4 +104,10 @@ y_pred2 = rf_tfidf_pipeline.predict(X_test)
 
 print(classification_report(y_train, y_pred))
 print(classification_report(y_test, y_pred2))
+
+c_vectorizer = CountVectorizer(stop_words='english', ngram_range=(1,2))
+cv_email_matrix = c_vectorizer.fit_transform(X_train)
+nmf = NMF(n_components=15)
+W = nmf.fit_transform(cv_email_matrix)
+H = nmf.components_
 
