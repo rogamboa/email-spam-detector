@@ -20,6 +20,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 
+from sklearn.decomposition import NMF
 
 def remove_accents(input_str):
     nfkd_form = unicodedata.normalize('NFKD', input_str)
@@ -42,6 +43,11 @@ def show_topics(nmf_model, feature_names, num_topics=10, num_top_words=10):
     word_df = pd.DataFrame(word_dct)
         
     return word_df
+
+def nmf_error_reconstruction(text_matrix, n_components):
+    nmf = NMF(n_components=n_components)
+    nmf.fit(text_matrix)
+    return nmf.reconstruction_err_
 
 emails_filepaths = sorted(glob.glob("data/emails/inmail.*"), key=email_num_key_compare)
 
@@ -111,3 +117,9 @@ nmf = NMF(n_components=15)
 W = nmf.fit_transform(cv_email_matrix)
 H = nmf.components_
 
+feature_names = c_vectorizer.get_feature_names()
+num_topics = 15
+
+top_10_topics_and_words = show_topics(nmf, feature_names, num_topics=num_topics)
+
+print(top_10_topics_and_words)
