@@ -1,12 +1,5 @@
 #!/usr/bin/env python
 
-import glob
-import pandas as pd
-from bs4 import BeautifulSoup
-import unicodedata
-import nltk
-import re
-
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import make_pipeline
 
@@ -21,6 +14,15 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 
 from sklearn.decomposition import NMF
+
+import matplotlib.pyplot as plt
+
+import pickle
+import numpy as np
+import pandas as pd
+import re
+
+plt.style.use('ggplot')
 
 def remove_accents(input_str):
     nfkd_form = unicodedata.normalize('NFKD', input_str)
@@ -48,6 +50,40 @@ def nmf_error_reconstruction(text_matrix, n_components):
     nmf = NMF(n_components=n_components)
     nmf.fit(text_matrix)
     return nmf.reconstruction_err_
+
+def remove_num(text):
+    text = text.lower()
+    text = re.sub(r'\d+', '', text)
+    return text
+
+def get_word_counts(corpus):
+    c_vectorizer = CountVectorizer(stop_words='english', ngram_range=(1,1), preprocessor=remove_num)
+    cv_email_matrix = c_vectorizer.fit_transform(corpus)
+    
+    word_list = c_vectorizer.get_feature_names()    
+    count_list = np.asarray(cv_email_matrix.sum(axis=0))
+    return word_list, count_list
+
+def make_freq_word_bar_plt(dataset_title, corpus, num_words=15, color='red'):
+    
+    word_list, count_list = get_word_counts(corpus)
+    
+    top_freq_word_idx = count_list[0].argsort()[:(-15)-1:-1]
+
+    top_words = []
+    freq_cnt = []
+
+    for i in top_freq_word_idx:
+        top_words.append(word_list[i])
+        freq_cnt.append(count_list[0][i])
+        
+    plt.bar(top_words, freq_cnt, align='center', color=color)
+    plt.xticks(top_words, rotation=90)
+    plt.ylabel('Frequency Count')
+    plt.xlabel('Words')
+    plt.title(f'Top 15 Most Frequent Words in {dataset_title}')
+    plt.show()
+
 
 emails_filepaths = sorted(glob.glob("data/emails/inmail.*"), key=email_num_key_compare)
 
