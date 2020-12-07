@@ -21,8 +21,9 @@ Source: https://talosintelligence.com/reputation_center/email_rep#global-volume 
 
 ## The Dataset
 
-The data is contains 75,419 emails in a raw text files with an index file containing the spam or ham labels for each email text file. The email text files included all data found in an email such as metadata, html code, MIME information, text and etc.
+The dataset contains 75,419 emails in a raw text files with an index file containing the spam or ham labels for each email text file. The email text files included all data found in an email such as metadata, html code, MIME information, text and etc.
 
+Dataset sourced from [here](https://plg.uwaterloo.ca/~gvcormac/treccorpus07/about.html).
 
 ## Data Cleaning Process
 
@@ -172,11 +173,11 @@ For further analysis, Non-negative Matrix Factorization (NMF) was performed to e
 
 ### Topic Distribution
 ![](./images/Spam-Ham-Distribution.png)
-Note: Topic 13 was omitted as a large majority of both spam and ham emails fell into this topic. In the case an email would have been categorize as topic 13, it was categorized with the second most related topics.
+
+- Note: Topic 13 was omitted as a large majority of both spam and ham emails fell into this topic. In the case an email would have been categorize as topic 13, it was categorized with the second most related topics.
 
 ### Analysis of Results
 Comparing the the topics table and topic distribution of the email dataset, there are interesting trends where the ham emails mainly fell in topics 15, 11 and 2. While large portions of the spam emails fell into topics 7, 14, 8 and 12.
 
 ## Future Work
 - Explore Topics and determine names that describe each topic
-
