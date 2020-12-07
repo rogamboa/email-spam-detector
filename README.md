@@ -7,12 +7,12 @@ The purpose of this project is to produce a predictive machine learning model th
 ## Context
 
 ### What is Spam?
-Spam email is considered similar to the junk mail one would recieve in their physical mail. The majority these spam emails are unsolicited commercial advertising and simply result in clogging up your email inbox. Unlike regular junk mail though, not only is email spam annoying, but may contain potentially dangerous content including:
+Spam email is considered similar to the junk mail one would receive in their physical mail. The majority these spam emails are unsolicited commercial advertising and simply result in clogging up your email inbox. Unlike regular junk mail though, not only is email spam annoying, but may contain potentially dangerous content including:
 
 - links to websites meant to steal personal information or download malware
 - a seemingly legitimate file attachment that has malware embedded.
 
-Today, email spam is prevelant as ever. In November 2020, the average daily volume were as follows:
+Today, email spam is prevalent as ever. In November 2020, the average daily volume were as follows:
 
 - 210.54 Billion Average Daily Spam Volume (84.84% of total global email traffic)
 - 38.16 Billion Average Daily Legitimate Volume (15.16% of total global email traffic) 
@@ -46,12 +46,15 @@ Snippet of dataframe shown below:
 
 For exploratory data analysis, since the data existed in a text format, the CountVectorizer module was used to calculate the frequency of terms used in the emails.
 
+The three bar plots below visualize the top 15 frequent words for all emails, only spam emails and ham emails, respectively. Altogether, these plots reveal a few initial characteristics between spam and ham emails. First, the terms 'Type', 'Content', and 'Transfer' appear in the top five for both the all emails and spam emails plots while these terms do not appear in the ham email plot at all. Also, there are unique words such as 'pills', 'mg', and 'price' only found in the spam email plot which indicate the commercial advertising nature of spam emails.
+
 ![](./images/All-Emails-most-freq-words.png)
 ![](./images/Spam-Emails-most-freq-words.png)
 ![](./images/Ham-Emails-most-freq-words.png)
 
 
 ## Model Selection and Performance Metrics
+In order to choose the best model to detect spam emails, six pipelines were created using two types of vectorizers to vectorized the data and then inputted into three models: MultimodalNB, RandomForestClassifier, LogisticRegression. After performing a train-test-split on the data and fitting the training set to each model pipeline, the performance metrics on testing set were compared among the pipelines. The metrics are shown below:
 
 
 ### CountVectorizer - MultimodalNB Pipeline
@@ -140,18 +143,20 @@ For exploratory data analysis, since the data existed in a text format, the Coun
 
 
 ## Analysis of Results
-In terms of prediction metrics and speed, the CountVectorizer MultimodalNB provided the best performance.
+Analyzing the results, the type of vectorizer had little affect on the performance of any of the models. Examining the models specifically, the RandomForestClassifier did not perform as well as the MultimodalNB and LogisticRegression models. In fact, the MultimodalNB and LogisticRegression models perform very similarly to each other and therefore, timed performance was also measured in order choose the best model between the two. This concluded with the MultimodalNB as the best model because the time to fit for this model was faster than the LogisticRegression model (faster by, 130 seconds and 70 seconds when using CountVectorizer and TfidfVectorizer, respectively). This faster fitting speed is beneficial when new data is introduced and the model needs to be re-fitted.
 
 
-### Topic Modeling
+## Topic Modeling
 
-#### Choosing the Number of Topics (Components)
+For further analysis, Non-negative Matrix Factorization (NMF) was performed to explore topics (latent features) on the email dataset. In choosing the number of components, the deltas of the reconstruction error were graphed and choose where the deltas fell below 100 which occurred around 15 topics.
+
+### Choosing the Number of Topics (Components)
 ![](./images/Reconstruction-error.png)
 
 ![](./images/Reconstruction-error-deltas.png)
 
 
-#### Topics
+### Topics
 | Topic #1 | Topic #2 |	Topic #3 | Topic #4 | Topic #5 	| Topic #6 	| Topic #7 | Topic #8 | Topic #9 | Topic #10 | Topic #11 | Topic #12 | Topic #13 | Topic #14 | Topic #15 |
 |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
 | struct | src | mg | source | http | heimdal | bf | money | define | interp | samba | desjardins | type | com | null | 
@@ -165,9 +170,13 @@ In terms of prediction metrics and speed, the CountVectorizer MultimodalNB provi
 | uint | usr | tabs | flib | dept | asn | aln | make | yesconfigure | return | nick | si | new | email | ctx | 
 | flags | pmcc | soft | fheimdal | story | makefile | nhs | account | sugar | key | timestamp | transaction | help | yahoo | static | 
 
-#### Topic Distribution
+### Topic Distribution
 ![](./images/Spam-Ham-Distribution.png)
+Note: Topic 13 was omitted as a large majority of both spam and ham emails fell into this topic. In the case an email would have been categorize as topic 13, it was categorized with the second most related topics.
 
+### Analysis of Results
+Comparing the the topics table and topic distribution of the email dataset, there are interesting trends where the ham emails mainly fell in topics 15, 11 and 2. While large portions of the spam emails fell into topics 7, 14, 8 and 12.
 
 ## Future Work
 - Explore Topics and determine names that describe each topic
+
